@@ -38,7 +38,10 @@ nltk_dirs = [
     "taggers"
 ]
 for d in nltk_dirs:
-    found += os.listdir(nltk.data.find(d))
+    try:
+        found += os.listdir(nltk.data.find(d))
+    except LookupError:
+        pass
 
 for corpus in REQUIRED_CORPORA:
     corpus_name = "{}.zip".format(corpus)
