@@ -1,3 +1,4 @@
+[![PyPI version](https://badge.fury.io/py/smartsearch.svg)](https://badge.fury.io/py/smartsearch)  [![Build Status](https://travis-ci.org/ironman5366/smartsearch.svg?branch=master)](https://travis-ci.org/ironman5366/smartsearch)
 # Smart search
 ## Installation
 `pip install smartsearch`
