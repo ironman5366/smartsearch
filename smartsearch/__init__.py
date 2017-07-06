@@ -30,7 +30,15 @@ REQUIRED_CORPORA = [
 not_downloaded = []
 
 # The downloaded nltk modules
-found = os.listdir(nltk.data.find("corpora"))
+found = []
+nltk_dirs = [
+    "corpora",
+    "tokenizers",
+    "chunkers",
+    "taggers"
+]
+for d in nltk_dirs:
+    found += os.listdir(nltk.data.find(d))
 
 for corpus in REQUIRED_CORPORA:
     corpus_name = "{}.zip".format(corpus)
@@ -74,15 +82,18 @@ class Searcher:
         else:
             self.keys = keys
         # Validate the API keys
-        for key, key_data in self.keys.items():
-            if key in _client_classes.keys():
-                if type(key_data) != str:
-                    raise exceptions.InvalidKeyTypeError("Keys must be of type str")
+        if keys:
+            for key, key_data in self.keys.items():
+                if key in _client_classes.keys():
+                    if type(key_data) != str:
+                        raise exceptions.InvalidKeyTypeError("Keys must be of type str")
+        else:
+            log.warning("No keys found")
         for client_name, client_baseclass in _client_classes.items():
             if client_baseclass.key_required:
                 # If the client name is included in the loaded keys, instantiate the client with the key data.
                 # If it's not included, warn in the logs that the client will be skipped
-                if client_name in self.keys.keys():
+                if self.keys and client_name in self.keys.keys():
                     # Instantiate the client with the key information
                     instantiated_client = client_baseclass(self.keys[client_name])
                     self.clients.update({client_name: instantiated_client})
@@ -118,7 +129,11 @@ class Searcher:
 
         :param filename: The file to save it to. If none is specified, saved as "search.conf"
         """
-        log.info("Caching search settings in file {}".format(filename))
-        with open(filename, "w") as f:
-            json_data = json.dumps(self.keys)
-            f.write(json_data)
+        if self.keys():
+            log.info("Caching search settings in file {}".format(filename))
+            with open(filename, "w") as f:
+                json_data = json.dumps(self.keys)
+                f.write(json_data)
+        else:
+            log.warning("No configuration to cache")
+
