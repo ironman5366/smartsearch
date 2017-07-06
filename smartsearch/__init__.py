@@ -132,7 +132,7 @@ class Searcher:
 
         :param filename: The file to save it to. If none is specified, saved as "search.conf"
         """
-        if self.keys():
+        if self.keys:
             log.info("Caching search settings in file {}".format(filename))
             with open(filename, "w") as f:
                 json_data = json.dumps(self.keys)
